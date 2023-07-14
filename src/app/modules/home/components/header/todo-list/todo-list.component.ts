@@ -9,26 +9,37 @@ import { TaskList } from 'src/modules/home/model/task-list';
   styleUrls: ['./todo-list.component.scss'],
 })
 export class TodoListComponent implements DoCheck {
-  public taskList: Array<TaskList> = [];
+  public taskList: Array<TaskList> = JSON.parse(
+    localStorage.getItem('list') || '[]'
+  );
 
-  ngDoCheck(): void {
-    this.taskList.sort((first, last) => 
-    Number(first.checked) - Number(last.checked)
-    )
+  ngDoCheck() {
+    this.setLocalStorage();
   }
 
-  public setEmmitTaskList(event: string){
-    this.taskList.push({task: event, checked: false})
+  public setEmmitTaskList(event: string) {
+    this.taskList.push({ task: event, checked: false });
   }
-  
-  public deleteItemTaskList(event: number){
+
+  public deleteItemTaskList(event: number) {
     this.taskList.splice(event, 1);
   }
 
-  public deleteAllTaskList(){
-    const confirm = window.confirm("Você deseja realmente deltar todas as tasks?")
+  public deleteAllTaskList() {
+    const confirm = window.confirm(
+      'Você deseja realmente deltar todas as tasks?'
+    );
     if (confirm) {
       this.taskList = [];
+    }
+  }
+
+  public setLocalStorage() {
+    if (this.taskList) {
+      this.taskList.sort(
+        (first, last) => Number(first.checked) - Number(last.checked)
+      );
+      localStorage.setItem('list', JSON.stringify(this.taskList));
     }
   }
 }
